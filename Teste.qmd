@@ -1,0 +1,144 @@
+---
+title: "South Africa - News Related to Load Shedding"
+format: html
+editor: visual
+---
+
+## Business Live
+
+```{r}
+#| echo: false
+#| warning: false
+
+rm(list=ls())
+
+# Load the required packages
+library(rvest)
+library(tidyverse)
+library(DT)
+
+# Set the URL
+url <- "https://www.businesslive.co.za/"
+
+# Read the HTML content of the webpage
+webpage <- read_html(url)
+
+# Extract the news headlines
+headlines <- webpage %>% 
+  html_nodes("body.publication-bl a.article-title") %>% 
+  html_text()
+
+# Print the headlines
+# print(headlines)
+
+
+urls <- webpage %>% 
+  html_nodes("body.publication-bl a.article-title") %>% 
+  html_attr("href")
+
+urls_cpref <- paste0("https://www.businesslive.co.za/",   urls)
+
+# Combine the headlines and URLs into a data frame
+news_df <- data.frame(headline = headlines, url = urls_cpref)
+
+# Print the data frame
+# print(news_df)
+# 
+# datatable(news_df)
+
+# Filtro NAIVE
+
+#news_filtered <- news_df %>% 
+#  filter(grepl("Eskom|Government|
+#               Energy|load|
+#               shedding|Economy|
+#               fiscal|monetary|
+#               Ramaphosa|SARB|
+#               bank|corruption|
+#               Putin|", headlines, ignore.case=TRUE))
+
+
+news_filtered <- news_df %>% 
+  filter(grepl("Eskom|Government|
+               Energy|load|
+               shedding|electricity|
+               bank|Ramokgopa|power|crisis|curtailment", headlines, ignore.cas =TRUE))
+
+datatable(news_filtered) %>% 
+  formatStyle(
+    'url', # Column name
+    target = 'cell', # Open link in new tab
+    textDecoration = 'underline', # Add underline to link text
+    fontWeight = '', # Make link text bold
+    cursor = 'pointer', # Change cursor on hover
+    color = 'blue' # Change link color
+  )
+
+
+```
+
+## News24
+
+```{r}
+#| echo: false
+#| warning: false
+
+rm(list=ls())
+
+# Load the required packages
+library(rvest)
+library(tidyverse)
+library(DT)
+
+# Set the URL
+url <- "https://www.news24.com/"
+
+# Read the HTML content of the webpage
+webpage <- read_html(url)
+
+# Extract the news headlines
+headlines <- webpage %>% 
+  html_nodes("a.article-item--url") %>% 
+  html_text()
+
+# Print the headlines
+# print(headlines)
+
+
+urls <- webpage %>% 
+  html_nodes("a.article-item--url") %>% 
+  html_attr("href")
+
+
+
+headlines <- gsub("[[:space:][:punct:]]+", " ", headlines)
+
+# Combine the headlines and URLs into a data frame
+news_df <- data.frame(headline = headlines, url = urls)
+
+# # Print the data frame
+# print(news_df)
+# 
+# datatable(news_df)
+
+# Filtro NAIVE
+
+news_filtered <- news_df %>% 
+  filter(grepl("Eskom|Government|
+               Energy|load|
+               shedding|electricity|
+               bank|Ramokgopa|power|crisis|curtailment", headlines, ignore.cas =TRUE))
+
+datatable(news_filtered) %>% 
+  formatStyle(
+    'url', # Column name
+    target = 'cell', # Open link in new tab
+    textDecoration = 'underline', # Add underline to link text
+    fontWeight = '', # Make link text bold
+    cursor = 'pointer', # Change cursor on hover
+    color = 'blue' # Change link color
+  )
+
+
+
+```
